@@ -1,0 +1,5 @@
+Hello My name is Ben
+Ben is a software developer
+Ben loves coding and learning new technologies
+This file contains matches on all lines for the given pattern Ben
+Ben enjoys solving complex problems and working on innovative projects

@@ -1,9 +1,9 @@
-package src.main.java;
+package com.benzhao.loganalyzer;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class logAnalyzer{
+public class LogAnalyzer{
     public static void main(String [] args) {
         if (args.length < 2) {
             System.out.println("Usage: java logAnalyzer <logfile> [<keyword>]");
@@ -25,9 +25,22 @@ public class logAnalyzer{
     }
 
     public static int[] readingFile(String logFile, String keyword) throws IOException {
-        // TODO: Count the number of lines that contain the keyword
-        // and the total number of lines in the file.
-        // Return an array with two elements: [matchingLines, totalLines]
-        throw new UnsupportedOperationException("Unimplemented method 'readingFile'");
+        try (BufferedReader reader = new BufferedReader(new FileReader(logFile))) {
+            String line;
+            Integer matchingLines = 0;
+            Integer totalLines = 0;
+            while ((line = reader.readLine()) != null) {
+                totalLines++;
+                if (line.contains(keyword)) {
+                    matchingLines++;
+                }
+            }
+            
+            int[] results = new int[] {
+                matchingLines, totalLines
+            };
+            return results;
+
+        } 
     }
 }
