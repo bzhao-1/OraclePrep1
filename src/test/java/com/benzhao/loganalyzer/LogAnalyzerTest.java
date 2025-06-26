@@ -1,6 +1,7 @@
 package com.benzhao.loganalyzer;
 
 import java.io.IOException;
+import com.benzhao.loganalyzer.FileAnalysis;
 
 
 import org.junit.jupiter.api.Test;
@@ -8,54 +9,73 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+
 public class LogAnalyzerTest {
     @Test
     public void testNonExistentFile() {
         assertThrows(IOException.class,  () -> {
-            LogAnalyzer.readingFile("", null);
+            LogAnalyzer.analyzeLogFile("", null);
         });
     }
 
     @Test
     public void testNullFilePath() {
         assertThrows(NullPointerException.class,  () -> {
-            LogAnalyzer.readingFile(null, "test");
+            LogAnalyzer.analyzeLogFile(null, "test");
         });
 
     }
 
     @Test
     public void testEmptyFile() throws IOException {
-        String filePath = "/Users/benzhao/Desktop/Fun-Projects-/src/test/resources/empty.txt";
-        int[] results = LogAnalyzer.readingFile(filePath, "Ben");
-        assertEquals(0, results[0]);
-        assertEquals(0, results[1]);
+        String filePath = getClass().getClassLoader().getResource("empty.txt").getPath();
+        FileAnalysis results = LogAnalyzer.analyzeLogFile(filePath, "Ben");
+        int matches = results.matchingLines();
+        int total = results.totalLines();
+        assertEquals(0, matches);
+        assertEquals(0, total);
       
     }
 
     @Test
-    public void testNoMatchingLines() throws IOException {
-        String filePath = "/Users/benzhao/Desktop/Fun-Projects-/src/test/resources/no_matches.txt";
-        int[] results = LogAnalyzer.readingFile(filePath, "Ben");
-        assertEquals(0, results[0]);
-        assertEquals(5, results[1]);
+    public void testValidFileNoKeyword() throws IOException {
+        String filePath = getClass().getClassLoader().getResource("no_matches.txt").getPath();
+        FileAnalysis results = LogAnalyzer.analyzeLogFile(filePath, "");
+        int matches = results.matchingLines();
+        int total = results.totalLines();
+        assertEquals(5, matches);
+        assertEquals(5, total);
+    }
+
+    @Test
+    public void testNoLinesMatchKeyword() throws IOException {
+        String filePath = getClass().getClassLoader().getResource("no_matches.txt").getPath();
+        FileAnalysis results = LogAnalyzer.analyzeLogFile(filePath, "Ben");
+        int matches = results.matchingLines();
+        int total = results.totalLines();
+        assertEquals(0, matches);
+        assertEquals(5, total);
 
     }
 
     @Test
-    public void testAllMatchingLines() throws IOException {
-        String filePath = "/Users/benzhao/Desktop/Fun-Projects-/src/test/resources/all_matches.txt";
-        int[] results = LogAnalyzer.readingFile(filePath, "Ben");
-        assertEquals(5, results[0]);
-        assertEquals(5, results[1]);
+    public void testAllLinesMatchKeyword() throws IOException {
+        String filePath = getClass().getClassLoader().getResource("all_matches.txt").getPath();
+        FileAnalysis results = LogAnalyzer.analyzeLogFile(filePath, "Ben");
+        int matches = results.matchingLines();
+        int total = results.totalLines();
+        assertEquals(5, matches);
+        assertEquals(5, total);
     }
 
     @Test
-    public void testSomeMatchingLines() throws IOException {
-        String filePath = "/Users/benzhao/Desktop/Fun-Projects-/src/test/resources/some_matches.txt";
-        int[] results = LogAnalyzer.readingFile(filePath, "Ben");
-        assertEquals(3, results[0]);
-        assertEquals(5, results[1]);
+    public void testSomeLinesMatchKeyword() throws IOException {
+        String filePath = getClass().getClassLoader().getResource("some_matches.txt").getPath();
+        FileAnalysis results = LogAnalyzer.analyzeLogFile(filePath, "Ben");
+        int matches = results.matchingLines();
+        int total = results.totalLines();
+        assertEquals(3, matches);
+        assertEquals(5, total);
 
     }
 

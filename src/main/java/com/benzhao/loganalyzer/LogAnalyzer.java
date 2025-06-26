@@ -2,6 +2,7 @@ package com.benzhao.loganalyzer;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import com.benzhao.loganalyzer.FileAnalysis;
 
 public class LogAnalyzer{
     public static void main(String [] args) {
@@ -14,21 +15,24 @@ public class LogAnalyzer{
         String keyword = args.length > 1 ? args[1] : null;
 
         try {
-            int[] results = readingFile(logFile, keyword);
-            System.out.println("Total matching lines for keyword '" + keyword + "': " + results[0] + 
-            "\n" + "Total lines in file:" + results[1] + 
-            "\n" + "Percentage of matching lines: " + (results[0] * 100.0 / results[1]) + "%");
+            FileAnalysis result = analyzeLogFile(logFile, keyword);
+            int matches = result.matchingLines();
+            int total = result.totalLines();
+
+            System.out.println("Total matching lines for keyword '" + keyword + "': " + matches + 
+            "\n" + "Total lines in file:" + total + 
+            "\n" + "Percentage of matching lines: " + (matches * 100.0 / total) + "%");
             
         } catch (IOException e) {
-            System.err.println("Error reading file: " + e.getMessage());
+            System.err.println("Error reading file: " + logFile + "with error: " + e.getMessage());
         }
     }
 
-    public static int[] readingFile(String logFile, String keyword) throws IOException {
+    public static FileAnalysis analyzeLogFile(String logFile, String keyword) throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(logFile))) {
             String line;
-            Integer matchingLines = 0;
-            Integer totalLines = 0;
+            int matchingLines = 0;
+            int totalLines = 0;
             while ((line = reader.readLine()) != null) {
                 totalLines++;
                 if (line.contains(keyword)) {
@@ -36,10 +40,8 @@ public class LogAnalyzer{
                 }
             }
             
-            int[] results = new int[] {
-                matchingLines, totalLines
-            };
-            return results;
+           
+            return new FileAnalysis(matchingLines, totalLines);
 
         } 
     }
