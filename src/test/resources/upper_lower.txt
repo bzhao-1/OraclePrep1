@@ -1,0 +1,5 @@
+Ben logged in successfully.
+ben encountered an error.
+BEN is offline now.
+The user named bEn has logged out.
+No match on this line.
