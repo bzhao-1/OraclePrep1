@@ -48,6 +48,16 @@ public class LogAnalyzerTest {
     }
 
     @Test
+    public void testValidFileNullKeyword () throws IOException {
+        String filePath = getClass().getClassLoader().getResource("no_matches.txt").getPath();
+        FileAnalysis results = LogAnalyzer.analyzeLogFile(filePath, null);
+        int matches = results.matchingLines();
+        int total = results.totalLines();
+        assertEquals(5, matches);
+        assertEquals(5, total);
+    }
+
+    @Test
     public void testNoLinesMatchKeyword() throws IOException {
         String filePath = getClass().getClassLoader().getResource("no_matches.txt").getPath();
         FileAnalysis results = LogAnalyzer.analyzeLogFile(filePath, "Ben");
