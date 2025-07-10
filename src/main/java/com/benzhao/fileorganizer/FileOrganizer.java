@@ -3,6 +3,8 @@ package com.benzhao.fileorganizer;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import com.benzhao.fileorganizer.FileType;
 
@@ -26,9 +28,12 @@ public class FileOrganizer {
     }
 
     public static List<FileType> organizeFilePath(String filePath) throws IOException{
+        if (filePath == null || filePath.isEmpty()) {
+            throw new IOException("File path cannot be null or empty");
+        }
+        
         List<FileType> fileTypes = new ArrayList<>();
         File fileObject = new File(filePath);
-
         if (!fileObject.exists()) {
             throw new IOException("File does not exist: " + filePath);
         }
@@ -36,11 +41,24 @@ public class FileOrganizer {
             throw new IOException("Provided path is not a directory: " + filePath);
         }
         File[] files = fileObject.listFiles();
-        if (files == null || files.length == 0) {
+        if (files.length == 0) {
             throw new IOException("No files found in directory: " + filePath);
         }
+        Arrays.sort(files, (f1, f2) -> {
+            if (f1.isDirectory() && !f2.isDirectory()) {
+                return -1; 
+            } else if (!f1.isDirectory() && f2.isDirectory()) {
+                return 1;  
+            } else {
+                return f1.getName().compareToIgnoreCase(f2.getName());
+            }
+        });
         // File types to account: txt, pdf, folder, movie, pptx, docx, png, jpg, csv, other
         for (File file: files) {
+            if (file.isDirectory()) {
+                fileTypes.add(new FileType(file.getName(), "folder"));
+                continue;
+            }
             String fileType = file.getName().substring(file.getName().lastIndexOf(".") + 1).toLowerCase();
             switch (fileType) {
                 case "txt":
@@ -49,10 +67,7 @@ public class FileOrganizer {
                 case "pdf":
                     fileType = "pdf";
                     break;
-                case "folder":
-                    fileType = "folder";
-                    break;
-                case "movie":
+                case "mov":
                     fileType = "movie";
                     break;
                 case "pptx":
@@ -62,7 +77,7 @@ public class FileOrganizer {
                     fileType = "document";
                     break;
                 case "png":
-                case "jpg":
+                case "jpeg":
                     fileType = "image";
                     break;
                 case "csv":
