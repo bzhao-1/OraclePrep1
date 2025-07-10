@@ -41,8 +41,7 @@ public class FileOrganizer {
         }
         // File types to account: txt, pdf, folder, movie, pptx, docx, png, jpg, csv, other
         for (File file: files) {
-            // Todo: Add logic to determine file type based on file extension
-            String fileType = "other";
+            String fileType = file.getName().substring(file.getName().lastIndexOf(".") + 1).toLowerCase();
             switch (fileType) {
                 case "txt":
                     fileType = "text";
